@@ -8,13 +8,17 @@ jobs:
     env:
       COVERAGE_SINGLE: 60
       COVERAGE_TOTAL: 60
-    name: Test python API
     steps:
-    - uses: actions/checkout@v4
-    - name: Install requirements
+    - uses: actions/checkout@main
+    - name: Set up Python 3.12
+      uses: actions/setup-python@main
+      with:
+        python-version: "3.12"
+    - name: Install dependencies
       run: |
-         pip install coverage
-         pip install -r requirements.txt
+        python -m pip install --upgrade pip
+        pip install flake8 pytest
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: pytester-cov
       id: pytester-cov
       uses: programmingwithalex/pytester-cov@main
