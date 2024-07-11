@@ -2,32 +2,24 @@ name: API workflow
 
 on: [push, pull_request]
 
+
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    env:
-      COVERAGE_SINGLE: 60
-      COVERAGE_TOTAL: 60
+  code-coverage-report:
+    runs-on: macos-latest
     steps:
-    - uses: actions/checkout@main
-    - name: Set up Python 3.12
-      uses: actions/setup-python@main
-      with:
-        python-version: "3.12"
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install flake8 pytest
-        pip install honeybadger
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-
-    - name: coverage
-      uses: paambaati/codeclimate-action@v8.0.0
-      env:
-         CC_TEST_REPORTER_ID: a74feccb5078454467bec3580569397c08fd150796dd7878f223143160892772
-      with:
-         coverageCommand: npm run coverage
-         debug: true
-
+      - uses: actions/checkout@v1
+      - run: xcodebuild test -project App.xcodeproj -scheme App -configuration Debug -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone X,OS=13.0' -enableCodeCoverage YES -derivedDataPath DerivedData
+      - uses: michaelhenry/swifty-code-coverage@v1.0.0
+        with:
+          build-path: DerivedData
+          target: App.app
+          is-spm: false
+      - name: Publish to code climate
+        uses: paambaati/codeclimate-action@v3.0.0
+        env:
+          CC_TEST_REPORTER_ID: a74feccb5078454467bec3580569397c08fd150796dd7878f223143160892772
+        with:
+          coverageLocations: |
+            coverage/lcov.info:lcov
 
          
