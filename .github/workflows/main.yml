@@ -16,5 +16,5 @@ jobs:
         run: pip install -r requirements.txt
       - name: coverage
         run: |
-          coverage run --source=code,test
+          pytest --cov --cov-report=html:coverage_re
           coverage report
