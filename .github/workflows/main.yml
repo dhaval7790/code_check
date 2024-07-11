@@ -18,6 +18,7 @@ jobs:
           pip install responses
           pip install -r requirements.txt
       - name: Run tests and collect coverage
-        run: |
-          coverage run --source=app -m pytest tests/
-          coveralls
+      - uses: dennisjensen95/coverage-scope@v0.5.0
+        with: 
+          coverage-filepath: cobertura.xml
+          branch: main
