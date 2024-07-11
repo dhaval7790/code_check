@@ -21,5 +21,13 @@ jobs:
         pip install honeybadger
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
+    - name: coverage
+      uses: paambaati/codeclimate-action@v8.0.0
+      env:
+         CC_TEST_REPORTER_ID: a74feccb5078454467bec3580569397c08fd150796dd7878f223143160892772
+      with:
+         coverageCommand: npm run coverage
+         debug: true
+
 
          
