@@ -3,7 +3,7 @@ import os
 from unittest import mock
 
 import pytest
-import responses
+
 
 import coveralls.cli
 from coveralls.exception import CoverallsException
