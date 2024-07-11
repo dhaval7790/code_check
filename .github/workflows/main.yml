@@ -1,25 +1,45 @@
-name: API workflow
-
-on: [push, pull_request]
-
-
+name: build
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - '!*' # Do not execute on tags
+  pull_request:
+    paths:
+      - '!*.MD'
 jobs:
-  code-coverage-report:
-    runs-on: macos-latest
+  test:
+    strategy:
+      matrix:
+        platform: [ ubuntu-latest ]
+        node: [ '14' ]
+    name: test/node ${{ matrix.node }}/${{ matrix.platform }}
+    runs-on: ${{ matrix.platform }}
     steps:
-      - uses: actions/checkout@v1
-      - run: xcodebuild test -project App.xcodeproj -scheme App -configuration Debug -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone X,OS=13.0' -enableCodeCoverage YES -derivedDataPath DerivedData
-      - uses: michaelhenry/swifty-code-coverage@v1.0.0
-        with:
-          build-path: DerivedData
-          target: App.app
-          is-spm: false
-      - name: Publish to code climate
-        uses: paambaati/codeclimate-action@v3.0.0
-        env:
-          CC_TEST_REPORTER_ID: a74feccb5078454467bec3580569397c08fd150796dd7878f223143160892772
-        with:
-          coverageLocations: |
-            coverage/lcov.info:lcov
-
-         
+    - uses: actions/checkout@master
+    - uses: actions/setup-node@master
+      with:
+        node-version: ${{ matrix.node }}
+    - run: npm install -g yarn
+    - run: yarn install
+    - run: yarn build
+    - run: yarn test
+  coverage:
+    needs: [ test ]
+    name: coverage
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - uses: actions/setup-node@master
+      with:
+        node-version: '14'
+    - run: npm install -g yarn
+    - run: yarn install
+    - run: yarn build
+    - uses: paambaati/codeclimate-action@v5
+      env:
+        CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+      with:
+        coverageCommand: yarn run coverage
+        debug: true
