@@ -63,5 +63,8 @@ jobs:
         echo "cov single fail ${{ steps.pytester-cov.outputs.cov-threshold-total-fail }}"
         exit 1
 
-    - name: Comment
-      run: steps.pytester-cov.outputs.output-table
+    - name: Produce the coverage report
+      uses: insightsengineering/coverage-action@v2
+      with:
+        body: ${{ steps.pytester-cov.outputs.output-table }}
+
