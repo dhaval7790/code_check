@@ -63,9 +63,5 @@ jobs:
         echo "cov single fail ${{ steps.pytester-cov.outputs.cov-threshold-total-fail }}"
         exit 1
 
-    - name: Add Coverage PR Comment
-      uses: peter-evans/create-or-update-comment@v4
-      with:
-          recreate: true
-          issue-number: 1
-          body: ${{ steps.pytester-cov.outputs.output-table }}
+    - name: Comment
+      run: steps.pytester-cov.outputs.output-table
