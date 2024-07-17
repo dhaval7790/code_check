@@ -1,19 +1,29 @@
-name: scan
+name: Security check - Bandit
 
-on:
-  push
+on: push
 
 jobs:
-  code-scanning:
+  build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ ubuntu-latest ]
+        python-version: [ '3.6.10' ]
+    name: Python ${{ matrix.python-version }} ${{ matrix.os }} 
+
     steps:
-     - uses: actions/checkout@master
-     
-     - name: check for vulnerabilities
-       uses: mdegis/bandit-action@v1.0
-       with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          path: "."
-          level: high
-          confidence: high
-          exit_zero: true
+    - uses: actions/checkout@v2
+
+    - name: Security check - Bandit
+      uses: ./
+      with:
+        python_version: ${{ matrix.python-version }}
+        project_path: .
+        ignore_failure: true
+
+    - name: Security check report artifacts
+      uses: actions/upload-artifact@v1
+      # if: failure()
+      with:
+        name: Security report
+        path: output/security_report.txt
