@@ -1,7 +1,6 @@
 name: Code Scan
 
-on:
-  pull_request:
+on: [push, pull_request]
 
 jobs:
   code-scanning:
