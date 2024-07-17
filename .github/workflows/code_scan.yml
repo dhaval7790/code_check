@@ -1,18 +1,11 @@
-name: Code Scan
-
-on:
-  pull_request:
-
+name: Example workflow for Python using Snyk
+on: push
 jobs:
-  code-scanning:
+  security:
     runs-on: ubuntu-latest
     steps:
-     - uses: actions/checkout@master
-     
-     - name: Run Snyk to check for vulnerabilities
-       uses: snyk/actions/python@master
-       env:
+      - uses: actions/checkout@master
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/python@master
+        env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-       with:
-          command: code test
-          args: --severity-threshold=medium
