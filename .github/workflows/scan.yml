@@ -1,29 +1,17 @@
-name: Security check - Bandit
+name: Bandit
 
-on: push
+on:
+  workflow_dispatch:
 
 jobs:
-  build:
+  analyze:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        os: [ ubuntu-latest ]
-        python-version: [ '3.6.10' ]
-    name: Python ${{ matrix.python-version }} ${{ matrix.os }} 
-
+    permissions:
+      # required for all workflows
+      security-events: write
+      # only required for workflows in private repositories
+      actions: read
+      contents: read
     steps:
-    - uses: actions/checkout@v2
-
-    - name: Security check - Bandit
-      uses: PyCQA/bandit-action@v1
-      with:
-        python_version: ${{ matrix.python-version }}
-        project_path: .
-        ignore_failure: true
-
-    - name: Security check report artifacts
-      uses: actions/upload-artifact@v1
-      # if: failure()
-      with:
-        name: Security report
-        path: output/security_report.txt
+      - name: Perform Bandit Analysis
+        uses: PyCQA/bandit-action@v1
