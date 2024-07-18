@@ -13,15 +13,5 @@ jobs:
       actions: read
       contents: read
     steps:
-     - name: Security check - Bandit
-       uses: PyCQA/bandit-action@v1
-       with:
-         project_path: .
-         ignore_failure: true
-
-     - name: Security check report artifacts
-       uses: actions/upload-artifact@v1
-      # if: failure()
-       with:
-          name: Security report
-          path: output/security_report.txt
+      - name: Perform Bandit Analysis
+        uses:  dhaval7790/bandit@main
